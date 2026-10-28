@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retos Matemáticos</title>
+  
+  <!-- Fuente externa accesible -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Variables de tema global y clases dinamicas de color */
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+      /* Proporcion inicial de columnas (25% | 75%) */
+      --col-width: 25%;
+
+      /* Colores dinamicos para las 4 clases de formato */
+      --color-clase1: #ef4444;
+      --color-clase2: #10b981;
+      --color-clase3: #3b82f6;
+      --color-clase4: #f59e0b;
+    }
+
+    /* Soporte automatico para modo oscuro */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --text-color: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Clases de formato requeridas con texto en negrilla obligatorio */
+    .clase1 { color: var(--color-clase1); font-weight: bold; }
+    .clase2 { color: var(--color-clase2); font-weight: bold; }
+    .clase3 { color: var(--color-clase3); font-weight: bold; }
+    .clase4 { color: var(--color-clase4); font-weight: bold; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Encabezado */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Botones y controles comunes */
+    button, select, input[type="color"], input[type="number"], input[type="text"] {
+      background: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button:hover {
+      border-color: var(--primary);
+      background-color: rgba(37, 99, 235, 0.05);
+    }
+
+    input[type="color"] {
+      padding: 2px;
+      width: 32px;
+      height: 32px;
+    }
+
+    input[type="number"] {
+      width: 60px;
+    }
+
+    input[type="text"] {
+      width: 220px;
+      cursor: text;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Barra de controles dinamicos para clases de texto */
+    .class-colors-bar {
+      display: flex;
+      gap: 12px;
+      background-color: var(--card-bg);
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* Layout principal ajustable (Panel Izquierdo + Lienzo) */
+    .main-grid {
+      display: grid;
+      grid-template-columns: var(--col-width) 1fr;
+      gap: 16px;
+      flex: 1;
+      width: 100%;
+    }
+
+    @media (max-width: 850px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Contenedores tipo Panel */
+    .panel {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 400px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    /* Estilos para los TEXTAREA y el Div Enunciado */
+    .editor-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    textarea.code-area {
+      width: 100%;
+      height: 75px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      padding: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea.code-area:focus {
+      border-color: var(--primary);
+    }
+
+    /* Div Enunciado con dimensiones y texto ajustables (Renderizador visual de HTML) */
+    #enunciado {
+      font-weight: normal; 
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      background-color: var(--bg-color);
+      overflow-y: auto;
+      overflow-x: hidden;
+      word-break: break-word;
+      white-space: pre-wrap;
+      resize: both;
+      min-width: 150px;
+      min-height: 120px;
+      flex: 1;
+    }
+
+    /* Contenedor y Lienzo de Dibujo */
+    .canvas-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .tool-btn.active {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 2px solid var(--border-color);
+      background-color: #ffffff;
+      min-height: 300px;
+      touch-action: none;
+      resize: vertical;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    /* Notificaciones Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #10b981;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    svg.icon {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado Principal -->
+  <header>
+    <h1 id="ui-title">Retos matemáticos</h1>
+    
+    <div class="header-controls">
+      <!-- Selector de Idioma -->
+      <button id="btnLangToggle" title="Cambiar Idioma">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        <span id="langLabel">EN / ES</span>
+      </button>
+
+      <!-- Color de Tema Principal -->
+      <div class="control-group">
+        <label for="themeColorPicker" id="ui-label-theme">Tema:</label>
+        <input type="color" id="themeColorPicker" value="#2563eb">
+      </div>
+
+      <!-- Copiar al Portapapeles (Solo Enunciado y Lienzo) -->
+      <button class="btn-primary" id="btnCopyComposite">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span id="ui-btn-copy">Copiar Resultado</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Barra de Controles para el Formato de las 4 Clases -->
+  <div class="class-colors-bar">
+    <span style="font-weight: 700; font-size: 0.9rem;" id="ui-label-classes">Colores de Formato Texto:</span>
+    <div class="control-group">
+      <label for="colorClase1">clase1:</label>
+      <input type="color" id="colorClase1" value="#ef4444">
+    </div>
+    <div class="control-group">
+      <label for="colorClase2">clase2:</label>
+      <input type="color" id="colorClase2" value="#10b981">
+    </div>
+    <div class="control-group">
+      <label for="colorClase3">clase3:</label>
+      <input type="color" id="colorClase3" value="#3b82f6">
+    </div>
+    <div class="control-group">
+      <label for="colorClase4">clase4:</label>
+      <input type="color" id="colorClase4" value="#f59e0b">
+    </div>
+  </div>
+
+  <!-- Contenedor Principal Ajustable (Grid de 2 Columnas) -->
+  <div class="main-grid">
+    
+    <!-- PANEL IZQUIERDO: Textareas y Div Enunciado -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title" id="ui-title-statement">Enunciado</span>
+        
+        <!-- Control de Tamaño de Fuente y URL -->
+        <div style="display:flex; gap:6px; align-items:center;">
+          <div class="control-group">
+            <label for="fontSizeInput" id="ui-label-font">Fuente:</label>
+            <input type="number" id="fontSizeInput" value="16" min="10" max="48">px
+          </div>
+          <button id="btnFetchData" title="Cargar/Actualizar desde Google Sheets">
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            <span id="ui-btn-fetch">Actualizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Configuración de Hoja de Cálculo (Google Sheets ID/URL) -->
+      <div style="display:flex; gap:6px; align-items:center;">
+        <input type="text" value="" id="sheetIdInput" placeholder="URL de Apps Script (/exec)..." title="URL de Google Apps Script">
+      </div>
+
+      <!-- TEXTAREA 1: Editable por el usuario -->
+      <span class="editor-label" id="ui-label-tx1">Código HTML editable:</span>
+      <textarea id="textareaEditable" class="code-area" placeholder="Escribe o edita el HTML del enunciado aquí..."></textarea>
+
+      <!-- TEXTAREA 2: No editable (muestra el código fuente plano sincronizado) -->
+      <span class="editor-label" id="ui-label-tx2">Código sincronizado (Lectura):</span>
+      <textarea id="textareaReadonly" class="code-area" readonly placeholder="Código fuente..."></textarea>
+
+      <!-- DIV ENUNCIADO: Renderiza visualmente el HTML con colores y etiquetas interpretadas -->
+      <span class="editor-label" id="ui-label-preview">Vista previa renderizada (HTML interpretado):</span>
+      <div id="enunciado">Cargando enunciado...</div>
+    </div>
+
+    <!-- PANEL DERECHO: Lienzo de Dibujo -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title" id="ui-title-canvas">Lienzo de Dibujo</span>
+        
+        <!-- Ancho del Panel (Ajuste de distribución) -->
+        <div class="control-group">
+          <label for="colWidthInput" id="ui-label-colwidth">Ancho Enunciado:</label>
+          <input type="number" id="colWidthInput" value="25" min="15" max="60">%
+        </div>
+      </div>
+
+      <!-- Barra de Herramientas del Lienzo -->
+      <div class="canvas-toolbar">
+        <input type="color" id="inkColor" value="#1e293b" title="Color de Tinta">
+        <input type="number" id="brushSize" value="4" min="1" max="50" title="Grosor del Trazo">
+
+        <button class="tool-btn active" id="btnPencil" data-tool="pencil" title="Lápiz Libre">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+        </button>
+        <button class="tool-btn" id="btnLine" data-tool="line" title="Línea Recta">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="5"></line></svg>
+        </button>
+        <button class="tool-btn" id="btnRect" data-tool="rect" title="Rectángulo">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+        </button>
+        <button class="tool-btn" id="btnCircle" data-tool="circle" title="Círculo">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle></svg>
+        </button>
+        <button class="tool-btn" id="btnEraser" data-tool="eraser" title="Borrador">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 20H7L3 16c-1-1-1-2 0-3l10-10c1-1 2-1 3 0l5 5c1 1 1 2 0 3L13 20z"></path></svg>
+        </button>
+
+        <button id="btnClearCanvas" style="margin-left: auto;" title="Limpiar Lienzo">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </div>
+
+      <!-- Lienzo con bordes redondeados y redimensionable -->
+      <div class="canvas-container" id="canvasContainer">
+        <canvas id="drawingCanvas"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast">¡Mensaje de estado!</div>
+
+  <script>
+    /* ==========================================================================
+       1. INTERNACIONALIZACIÓN Y TRADUCCIONES
+       ========================================================================== */
+    const translations = {
+      es: {
+        title: "Retos matemáticos",
+        theme: "Tema:",
+        copy: "Copiar Resultado",
+        classes: "Colores de Formato Texto:",
+        statement: "Enunciado",
+        font: "Fuente:",
+        fetch: "Actualizar",
+        canvas: "Lienzo de Dibujo",
+        colwidth: "Ancho Enunciado:",
+        labelTx1: "Código HTML editable:",
+        labelTx2: "Código sincronizado (Lectura):",
+        labelPreview: "Vista previa renderizada (HTML interpretado):",
+        copied: "✓ ¡Enunciado y Lienzo copiados al portapapeles!",
+        errorFetch: "⚠️ No se pudo obtener la celda A1.",
+        defaultText: 'Resuelve el problema: Si <span class="clase1">x = 5</span> y <span class="clase2">y = 10</span>, calcula la suma de <span class="clase3">ambos números</span> multiplicada por <span class="clase4">2</span>.'
+      },
+      en: {
+        title: "Math Challenges",
+        theme: "Theme:",
+        copy: "Copy Result",
+        classes: "Text Format Colors:",
+        statement: "Problem Statement",
+        font: "Font:",
+        fetch: "Update",
+        canvas: "Drawing Canvas",
+        colwidth: "Statement Width:",
+        labelTx1: "Editable HTML Code:",
+        labelTx2: "Synchronized Code (Read-Only):",
+        labelPreview: "Rendered Preview (Interpreted HTML):",
+        copied: "✓ Statement and Canvas copied to clipboard!",
+        errorFetch: "⚠️ Could not fetch cell A1.",
+        defaultText: 'Solve: If <span class="clase1">x = 5</span> and <span class="clase2">y = 10</span>, calculate <span class="clase3">their sum</span> multiplied by <span class="clase4">2</span>.'
+      }
+    };
+
+    let currentLang = localStorage.getItem('app_lang') || 'es';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('app_lang', lang);
+      const t = translations[lang];
+      document.getElementById('ui-title').innerText = t.title;
+      document.getElementById('ui-label-theme').innerText = t.theme;
+      document.getElementById('ui-btn-copy').innerText = t.copy;
+      document.getElementById('ui-label-classes').innerText = t.classes;
+      document.getElementById('ui-title-statement').innerText = t.statement;
+      document.getElementById('ui-label-font').innerText = t.font;
+      document.getElementById('ui-btn-fetch').innerText = t.fetch;
+      document.getElementById('ui-title-canvas').innerText = t.canvas;
+      document.getElementById('ui-label-colwidth').innerText = t.colwidth;
+      document.getElementById('ui-label-tx1').innerText = t.labelTx1;
+      document.getElementById('ui-label-tx2').innerText = t.labelTx2;
+      document.getElementById('ui-label-preview').innerText = t.labelPreview;
+    }
+
+    document.getElementById('btnLangToggle').addEventListener('click', () => {
+      setLanguage(currentLang === 'es' ? 'en' : 'es');
+    });
+
+    /* ==========================================================================
+       2. GESTIÓN DE PREFERENCIAS Y COLORES (LOCALSTORAGE)
+       ========================================================================== */
+    const themeColorPicker = document.getElementById('themeColorPicker');
+    const colorClase1 = document.getElementById('colorClase1');
+    const colorClase2 = document.getElementById('colorClase2');
+    const colorClase3 = document.getElementById('colorClase3');
+    const colorClase4 = document.getElementById('colorClase4');
+    const colWidthInput = document.getElementById('colWidthInput');
+    const fontSizeInput = document.getElementById('fontSizeInput');
+    const sheetIdInput = document.getElementById('sheetIdInput');
+    const enunciadoDiv = document.getElementById('enunciado');
+    const textareaEditable = document.getElementById('textareaEditable');
+    const textareaReadonly = document.getElementById('textareaReadonly');
+
+    function loadPreferences() {
+      const savedTheme = localStorage.getItem('app_theme_color');
+      if (savedTheme) {
+        themeColorPicker.value = savedTheme;
+        applyPrimaryColor(savedTheme);
+      }
+
+      const c1 = localStorage.getItem('app_c1') || '#ef4444';
+      const c2 = localStorage.getItem('app_c2') || '#10b981';
+      const c3 = localStorage.getItem('app_c3') || '#3b82f6';
+      const c4 = localStorage.getItem('app_c4') || '#f59e0b';
+      
+      colorClase1.value = c1; updateClassColor('--color-clase1', c1);
+      colorClase2.value = c2; updateClassColor('--color-clase2', c2);
+      colorClase3.value = c3; updateClassColor('--color-clase3', c3);
+      colorClase4.value = c4; updateClassColor('--color-clase4', c4);
+
+      const savedWidth = localStorage.getItem('app_col_width') || '25';
+      colWidthInput.value = savedWidth;
+      document.documentElement.style.setProperty('--col-width', savedWidth + '%');
+
+      const savedFont = localStorage.getItem('app_font_size') || '16';
+      fontSizeInput.value = savedFont;
+      enunciadoDiv.style.fontSize = savedFont + 'px';
+
+      const savedSheet = localStorage.getItem('app_sheet_id') || '';
+      sheetIdInput.value = savedSheet;
+    }
+
+    function applyPrimaryColor(color) {
+      document.documentElement.style.setProperty('--primary', color);
+      document.documentElement.style.setProperty('--primary-hover', color + 'cc');
+      localStorage.setItem('app_theme_color', color);
+    }
+
+    function updateClassColor(varName, color) {
+      document.documentElement.style.setProperty(varName, color);
+    }
+
+    themeColorPicker.addEventListener('input', (e) => applyPrimaryColor(e.target.value));
+    
+    colorClase1.addEventListener('input', (e) => { updateClassColor('--color-clase1', e.target.value); localStorage.setItem('app_c1', e.target.value); });
+    colorClase2.addEventListener('input', (e) => { updateClassColor('--color-clase2', e.target.value); localStorage.setItem('app_c2', e.target.value); });
+    colorClase3.addEventListener('input', (e) => { updateClassColor('--color-clase3', e.target.value); localStorage.setItem('app_c3', e.target.value); });
+    colorClase4.addEventListener('input', (e) => { updateClassColor('--color-clase4', e.target.value); localStorage.setItem('app_c4', e.target.value); });
+
+    colWidthInput.addEventListener('input', (e) => {
+      document.documentElement.style.setProperty('--col-width', e.target.value + '%');
+      localStorage.setItem('app_col_width', e.target.value);
+    });
+
+    fontSizeInput.addEventListener('input', (e) => {
+      enunciadoDiv.style.fontSize = e.target.value + 'px';
+      localStorage.setItem('app_font_size', e.target.value);
+    });
+
+    sheetIdInput.addEventListener('change', (e) => {
+      localStorage.setItem('app_sheet_id', e.target.value.trim());
+    });
+
+    /* Función central para actualizar ambos textareas y el div renderizado simultáneamente */
+    function updateContent(htmlContent) {
+      textareaEditable.value = htmlContent;
+      textareaReadonly.value = htmlContent;
+      enunciadoDiv.innerHTML = htmlContent;
+    }
+
+    /* Evento cuando el usuario edita el primer textarea */
+    textareaEditable.addEventListener('input', (e) => {
+      const val = e.target.value;
+      textareaReadonly.value = val;
+      enunciadoDiv.innerHTML = val;
+    });
+
+    /* ==========================================================================
+       3. PETICIÓN Y CARGA DE CELDA A1 DE GOOGLE SHEETS
+       ========================================================================== */
+    async function fetchCellA1() {
+      let url = sheetIdInput.value.trim();
+      if (!url) {
+        updateContent(translations[currentLang].defaultText);
+        return;
+      }
+
+      try {
+        updateContent("Cargando celda A1...");
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`Error de red: ${response.status}`);
+        }
+        
+        const content = await response.text();
+        if (content) {
+          updateContent(content);
+        } else {
+          updateContent("<em>La celda A1 está vacía.</em>");
+        }
+      } catch (err) {
+        console.error("Error al conectar con Apps Script:", err);
+        const errHtml = `<span style="color: red; font-weight: bold;">⚠️ Error al cargar A1. Verifica que la URL termine en /exec y sea accesible.</span>`;
+        updateContent(errHtml);
+        showToast(translations[currentLang].errorFetch);
+      }
+    }
+
+    document.getElementById('btnFetchData').addEventListener('click', fetchCellA1);
+
+    /* ==========================================================================
+       4. LIENZO DE DIBUJO INTERACTIVO (CANVAS)
+       ========================================================================== */
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasContainer = document.getElementById('canvasContainer');
+    const inkColor = document.getElementById('inkColor');
+    const brushSize = document.getElementById('brushSize');
+    const toolBtns = document.querySelectorAll('.tool-btn');
+
+    let currentTool = 'pencil';
+    let isDrawing = false;
+    let startX = 0, startY = 0;
+    let snapshot = null;
+
+    function resizeCanvas() {
+      const rect = canvasContainer.getBoundingClientRect();
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width || rect.width;
+      tempCanvas.height = canvas.height || rect.height;
+      tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
+    }
+
+    toolBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        toolBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTool = btn.getAttribute('data-tool');
+      });
+    });
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      const pos = getPos(e);
+      startX = pos.x;
+      startY = pos.y;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      e.preventDefault();
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const pos = getPos(e);
+
+      ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : inkColor.value;
+      ctx.lineWidth = brushSize.value;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (currentTool === 'pencil' || currentTool === 'eraser') {
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else {
+        ctx.putImageData(snapshot, 0, 0);
+        ctx.beginPath();
+        if (currentTool === 'line') {
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(pos.x, pos.y);
+        } else if (currentTool === 'rect') {
+          ctx.strokeRect(startX, startY, pos.x - startX, pos.y - startY);
+        } else if (currentTool === 'circle') {
+          const radius = Math.sqrt(Math.pow(pos.x - startX, 2) + Math.pow(pos.y - startY, 2));
+          ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+        }
+        if (currentTool !== 'rect') ctx.stroke();
+      }
+      e.preventDefault();
+    }
+
+    function stopDraw() {
+      if (!isDrawing) return;
+      isDrawing = false;
+      ctx.closePath();
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseleave', stopDraw);
+
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDraw);
+
+    document.getElementById('btnClearCanvas').addEventListener('click', () => {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    });
+
+    /* ==========================================================================
+       5. COPIAR ÚNICAMENTE ENUNCIADO (VISTA PREVIA) Y LIENZO AL PORTAPAPELES
+       ========================================================================== */
+    document.getElementById('btnCopyComposite').addEventListener('click', async () => {
+      const exportCanvas = document.createElement('canvas');
+      const exportCtx = exportCanvas.getContext('2d');
+
+      const padding = 20;
+      const statementWidth = 350; 
+      const totalWidth = statementWidth + canvas.width + (padding * 3);
+      const totalHeight = Math.max(400, canvas.height) + (padding * 2);
+
+      exportCanvas.width = totalWidth;
+      exportCanvas.height = totalHeight;
+
+      // Fondo blanco para la imagen resultante
+      exportCtx.fillStyle = '#ffffff';
+      exportCtx.fillRect(0, 0, totalWidth, totalHeight);
+
+      // Generación del SVG únicamente con el contenido renderizado del div enunciado
+      const dataSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${statementWidth}" height="${totalHeight}">
+          <foreignObject width="100%" height="100%">
+            <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Outfit', sans-serif; font-size:${fontSizeInput.value}px; color:#1e293b; word-break:break-word;">
+              <style>
+                .clase1 { color: ${colorClase1.value}; font-weight: bold; }
+                .clase2 { color: ${colorClase2.value}; font-weight: bold; }
+                .clase3 { color: ${colorClase3.value}; font-weight: bold; }
+                .clase4 { color: ${colorClase4.value}; font-weight: bold; }
+              </style>
+              ${enunciadoDiv.innerHTML}
+            </div>
+          </foreignObject>
+        </svg>
+      `;
+
+      const imgHtml = new Image();
+      imgHtml.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(dataSvg);
+
+      imgHtml.onload = () => {
+        exportCtx.drawImage(imgHtml, padding, padding);
+        exportCtx.drawImage(canvas, statementWidth + (padding * 2), padding);
+
+        exportCanvas.toBlob(async (blob) => {
+          try {
+            const item = new ClipboardItem({ 'image/png': blob });
+            await navigator.clipboard.write([item]);
+            showToast(translations[currentLang].copied);
+          } catch (err) {
+            console.error(err);
+            alert('Error al copiar imagen al portapapeles.');
+          }
+        }, 'image/png');
+      };
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    /* ==========================================================================
+       INICIALIZACIÓN DE LA APLICACIÓN
+       ========================================================================== */
+    window.addEventListener('load', () => {
+      loadPreferences();
+      setLanguage(currentLang);
+      resizeCanvas();
+      fetchCellA1();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+  </script>
+</body>
+</html>
